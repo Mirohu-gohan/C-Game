@@ -20,4 +20,17 @@ public:
     UniDx::Rigidbody* rb = nullptr;
 
 private:
+    std::vector<UniDx::Transform*>bones;
+    std::vector<UniDx::Quaternion>initialRotate;
+    float animFrame;
+
+
+	bool isGrounded = false;
+	bool isTouchingWall = false;
+	Vector3 wallNormal = Vector3::zero; 
+
+
+    const float jumpPower = 7.0f;
+	const float wallJumpPowerY = 7.0f;
+	const float wallJumpPowerX = 6.0f;
 };

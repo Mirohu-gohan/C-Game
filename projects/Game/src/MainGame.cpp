@@ -74,8 +74,8 @@ void MainGame::createMap()
         CubeRenderer::create<VertexPNT>(wallMat),
         move(rb),
         make_unique<AABBCollider>());
-    wall->transform->localScale = Vector3(5, 2, 1);
-    wall->transform->localPosition = Vector3(0, 0.5f, 3);
+    wall->transform->localScale = Vector3(5, 6, 1);
+    wall->transform->localPosition = Vector3(0, 3.0f, 3);
 
     // 親をマップにする
     Transform::SetParent(move(wall), map->transform);
@@ -90,14 +90,14 @@ unique_ptr<UniDx::Scene> MainGame::CreateScene()
     auto playerObj = make_unique<GameObject>(u8"プレイヤー",
         make_unique<GltfModel>(),
         make_unique<Rigidbody>(),
-        make_unique<SphereCollider>(Vector3(0, 0.5f, 0)),
+        make_unique<SphereCollider>(Vector3(0, 0.25f, 0)),
         make_unique<Player>()
         );
     auto model = playerObj->GetComponent<GltfModel>(true);
     model->Load<VertexSkin>(
-        u8"resource/ModularCharacterPBR.glb",
+        u8"resource/mini_emma.glb",
         u8"resource/SkinBasic.hlsl");
-    playerObj->transform->localPosition = Vector3(0, 0, 0);
+    playerObj->transform->localPosition = Vector3(-2.0f, 0.5f, 0);
     playerObj->transform->localRotation = Quaternion::Euler(0, 180, 0);
 
     // -- カメラ --
@@ -115,7 +115,7 @@ unique_ptr<UniDx::Scene> MainGame::CreateScene()
     font->Load(u8"resource/M PLUS 1.spritefont");
     auto textMesh = make_unique<TextMesh>();
     textMesh->font = font;
-    textMesh->text = u8"WASD:いどう\nIJKL:カメラ";
+    textMesh->text = u8"WASD:いどう\nSPACE:ジャンプ/かべジャンプ\nIJKL:カメラ\nOP:ライト";
 
     auto textObj = make_unique<GameObject>(u8"テキスト", textMesh);
     textObj->transform->localPosition = Vector3(100, 20, 0);
