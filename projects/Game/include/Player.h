@@ -14,7 +14,6 @@ public:
     virtual void OnTriggerStay(Collider* other) override;
     virtual void OnTriggerExit(Collider* other) override;
     virtual void OnCollisionEnter(const Collision& collision) override;
-    virtual void OnCollisionStay(const Collision& collision) override;
     virtual void OnCollisionExit(const Collision& collision) override;
 
     UniDx::Rigidbody* rb = nullptr;
@@ -22,15 +21,13 @@ public:
 private:
     std::vector<UniDx::Transform*>bones;
     std::vector<UniDx::Quaternion>initialRotate;
-    float animFrame;
+    float animFrame=0.0f;
 
 
-	bool isGrounded = false;
-	bool isTouchingWall = false;
-	Vector3 wallNormal = Vector3::zero; 
-
+	bool isGrounded = false; 
 
     const float jumpPower = 7.0f;
 	const float wallJumpPowerY = 7.0f;
 	const float wallJumpPowerX = 6.0f;
+    const float wallCheckDistance = 1.8f;
 };

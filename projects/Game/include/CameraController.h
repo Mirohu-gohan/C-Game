@@ -14,7 +14,7 @@ public:
     virtual void Update() override;
 
 private:
-    float pitch;
-    float yaw;
-    float length;
+    float pitch=0.0f;
+    float yaw=0.0f;
+    float length=0.0f;
 };

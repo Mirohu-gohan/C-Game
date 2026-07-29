@@ -6,6 +6,7 @@
 #include <UniDx/Collider.h>
 #include <UniDx/Time.h>
 #include <UniDx/PrimitiveRenderer.h>
+#include <UniDx/Physics.h>
 
 #include "MainGame.h"
 
@@ -78,38 +79,30 @@ void Player::Update()
     currentVel.x = moveVelocity.x;
     currentVel.z = moveVelocity.z;
 
+    //壁があるか判定
+    Vector3 pPos = transform->position;
+    
+    bool isNearWall = (pPos.z >= 1.8f && pPos.z <= 2.8f) && (std::abs(pPos.x) <= 3.0f);
+
+
+    //壁ジャン処理です
     if (Input::GetKeyDown(Keyboard::Space))
     {
-        if (isGrounded || std::abs(rb->linearVelocity.y) < 0.1f)
+        if (!isGrounded && isNearWall)
+        {
+            //壁ジャン
+            currentVel.y = wallJumpPowerY;
+            currentVel.z = -wallJumpPowerX;
+
+            isGrounded = false;
+        }
+        //通常ジャンプ
+        else if (isGrounded || std::abs(rb->linearVelocity.y) < 0.1f)
         {
             currentVel.y = jumpPower;
             isGrounded = false;
         }
-        else
-        {
-
-            GameObject* wallObj = gameObject->transform->parent != nullptr ?
-                gameObject->transform->parent->gameObject : nullptr;
-            if (isTouchingWall)
-            {
-                currentVel.y = wallJumpPowerY;
-
-                if (wallNormal !=Vector3::zero)
-                {
-                    currentVel.x = wallNormal.x * wallJumpPowerX;
-					currentVel.z = wallNormal.z * wallJumpPowerX;
-                }
-                else
-                {
-                    currentVel.z = -wallJumpPowerX;;
-                }
-
-				isTouchingWall = false;
-            }
-        }
     }
-
-    // 計算した最終速度（Y軸のジャンプ力や重力を含んだもの）をRigidbodyに設定
     rb->linearVelocity = currentVel;
 
     // プレイヤーの向きを変更
@@ -160,32 +153,9 @@ void Player::OnCollisionEnter(const Collision& collision)
         return;
     }
 
-    // 床判定
     if (collision.collider->name == StringId::intern("床"))
     {
         isGrounded = true;
-    }
-    // 壁判定
-    else if (collision.collider->name == StringId::intern("壁"))
-    {
-        isTouchingWall = true;
-        if (collision.contacts.size() > 0)
-        {
-            wallNormal = collision.contacts[0].normal;
-        }
-    }
-}
-
-void Player::OnCollisionStay(const Collision& collision)
-{
-    // 接地し続けている間も ground フラグを維持する
-    if (collision.collider->name == StringId::intern("床"))
-    {
-        isGrounded = true;
-    }
-    else if (collision.collider->name == StringId::intern("壁"))
-    {
-        isTouchingWall = true;
     }
 }
 
@@ -194,10 +164,6 @@ void Player::OnCollisionExit(const Collision& collision)
     if (collision.collider->name == StringId::intern("床"))
     {
         isGrounded = false;
-    }
-    else if (collision.collider->name == StringId::intern("壁"))
-    {
-        isTouchingWall = false;
     }
 }
 
