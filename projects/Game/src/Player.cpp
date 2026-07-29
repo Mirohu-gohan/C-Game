@@ -85,12 +85,27 @@ void Player::Update()
             currentVel.y = jumpPower;
             isGrounded = false;
         }
-        else if (isTouchingWall)
+        else
         {
-            currentVel.y = wallJumpPowerY;
-            currentVel.x = wallNormal.x * wallJumpPowerX;
-            currentVel.z = wallNormal.z * wallJumpPowerX;
-            isTouchingWall = false;
+
+            GameObject* wallObj = gameObject->transform->parent != nullptr ?
+                gameObject->transform->parent->gameObject : nullptr;
+            if (isTouchingWall)
+            {
+                currentVel.y = wallJumpPowerY;
+
+                if (wallNormal !=Vector3::zero)
+                {
+                    currentVel.x = wallNormal.x * wallJumpPowerX;
+					currentVel.z = wallNormal.z * wallJumpPowerX;
+                }
+                else
+                {
+                    currentVel.z = -wallJumpPowerX;;
+                }
+
+				isTouchingWall = false;
+            }
         }
     }
 
